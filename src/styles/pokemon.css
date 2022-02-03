@@ -1,0 +1,69 @@
+.pokemon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(104, 92, 99, 0.8);
+  padding: 25px;
+}
+.pokemon .pokemon_stat .pokemon-stat_img {
+  width: 450px;
+  height: 450px;
+}
+.pokemon .pokemon_information {
+  margin-left: 70px;
+}
+.pokemon .pokemon_information .pokemon-information_description {
+  font-size: 140%;
+  color: #fff;
+  margin-bottom: 30px;
+}
+.pokemon .pokemon_information .pokemon-information_parameters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.pokemon .pokemon_information .pokemon-information_parameters .pokemon-information-parameters_param {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.param_tittle, .param_value {
+  color: #fff;
+}
+
+.param_tittle {
+  font-size: 130%;
+  margin-bottom: 15px;
+}
+
+.param_value {
+  font-size: 110%;
+  text-align: center;
+}
+
+.containerTypesWeaknesses {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 45%;
+}
+
+.pokemon-information-main-types_title, .pokemon-information-main-weaknesses_title {
+  margin: 50px 0 15px 0;
+  font-size: 130%;
+  color: #fff;
+}
+
+.pokemon-information-main-types_type {
+  width: 100px;
+  padding: 5px 0;
+  text-align: center;
+  color: #fff;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+/*# sourceMappingURL=pokemon.css.map */
