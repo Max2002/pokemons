@@ -78,6 +78,24 @@ ul {
   transform: rotate(180deg);
   transition: 0.5s;
 }
+.header_container .header_clock {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.header_container .header_clock .wrapper-clock {
+  background: #585858;
+  margin: 0 10px;
+  border-radius: 50%;
+  padding: 15px 12px;
+}
+.header_container .header_clock .wrapper-clock span {
+  color: #fff;
+  font-weight: bold;
+  background: #313131de;
+  padding: 5px;
+  border-radius: 50%;
+}
 
 .main {
   padding: 200px 0 50px 0;
