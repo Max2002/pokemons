@@ -21,7 +21,7 @@ class Pokemons extends Component {
     }
 
     componentDidMount() {
-        axios.get(`https://pokeapi.co/api/v2/pokemon?limit=50`)
+        axios.get(`https://pokeapi.co/api/v2/pokemon?limit=800`)
             .then(result => {
                     this.setState({
                         isLoaded: true,
