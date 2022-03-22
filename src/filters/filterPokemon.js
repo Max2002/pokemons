@@ -1,41 +1,54 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import colors from "../../src/colorType";
+import LeftParam from "./leftParam";
+import RightParam from "./rightParam";
+import clsx from "clsx";
 
 function FilterPokemon(props) {
-    const activeFilterButton = (index, active) => {
-        let buttons = document.querySelectorAll(".filters-types_flex");
-        [...buttons[index].children].map(btn => {
-            if (active === 't' && btn !== buttons[index].children[1])
-                btn.classList.remove("activeBtn");
-            else if (active === 'w' && btn !== buttons[index].children[2])
-                btn.classList.remove("activeBtn");
-        });
-        if (active === 't')
-            buttons[index].children[1].classList.toggle("activeBtn");
-        else
-            buttons[index].children[2].classList.toggle("activeBtn");
-    }
-
-    const activeFilterParam = (index, active) => {
-        let nodeParams = document.querySelectorAll(".flex-param");
-        [...nodeParams[index].children].map(param => {
-            if (param !== nodeParams[index].children[active])
-                param.classList.remove("activeValue");
-        });
-        nodeParams[index].children[active].classList.toggle("activeValue");
-    }
-
-    const toggleFilters = () => {
-        const nodeFilters = document.querySelector(".filters");
-        document.querySelector(".filters-open_btn").classList.toggle("activeBtnFilters");
-        document.querySelector(".filters-open_img").classList.toggle("activeImgFilters");
-        if (nodeFilters.classList.contains("activeFilters")) {
-            nodeFilters.classList.remove("activeFilters");
-            setTimeout(() => nodeFilters.style.display = "none", 1000);
-        } else {
-            nodeFilters.classList.add("activeFilters");
-            nodeFilters.style.display = "flex";
+    const [rangeFrom, setRangeFrom] = useState("");
+    const [rangeTo, setRangeTo] = useState("");
+    const [toggleFilters, setToggleFilters] = useState(false);
+    const [types, setTypes] = useState([]);
+    const [weaknesses, setWeaknesses] = useState([]);
+    const [height, setHeight] = useState("");
+    const [weight, setWeight] = useState("");
+    useEffect(() => {
+        if (props.refresh) {
+            setRangeFrom("");
+            setRangeTo("");
+            setTypes([]);
+            setWeaknesses([]);
+            setHeight("");
+            setWeight("");
         }
+    }, [props.refresh]);
+
+    const setTAndW = (title, flag) => {
+        let typesState = types.slice();
+        let weaknessesState = weaknesses.slice();
+        if (flag === "types" && !typesState.includes(title)) {
+            typesState.push(title);
+            setWeaknesses(weaknessesState.filter(val => val !== title));
+            setTypes(typesState);
+        } else if (flag === "weaknesses" && !weaknessesState.includes(title)) {
+            weaknessesState.push(title);
+            setTypes(typesState.filter(val => val !== title));
+            setWeaknesses(weaknessesState);
+        } else {
+            setTypes(typesState.filter(val => val !== title));
+            setWeaknesses(weaknessesState.filter(val => val !== title));
+        }
+    }
+
+    const setHAndW = (value, flag) => {
+        if (flag === "height")
+            setHeight(value);
+        else if (flag === "weight")
+            setWeight(value);
+        else if (flag === "clearHeight")
+            setHeight("");
+        else
+            setWeight("");
     }
 
     const contains = (array, otherArray) => {
@@ -45,40 +58,16 @@ function FilterPokemon(props) {
     const filters = () => {
         let pokemons = props.pokemons;
         let filterPokemons = [];
-        let typesAndWeaknesses = [...document.querySelectorAll(".filters-types_flex")];
-        let range = document.querySelectorAll(".filters-types-range_inp");
-        let nodeParam = document.querySelectorAll(".flex-param");
-        let paramHeight = "", paramWeight = "";
-        let types = [], weaknesses = [];
         let heightPokemon = pokemons.map(pokemon => +pokemon.parameters.height.split('m')[0]);
         let weightPokemon = pokemons.map(pokemon => +pokemon.parameters.weight.split('kg')[0]);
         let valuesHeight = [Math.max(...heightPokemon),
             heightPokemon.reduce((sum, elem) => sum + elem) / heightPokemon.length, Math.min(...heightPokemon)];
         let valuesWeight = [Math.max(...weightPokemon),
             weightPokemon.reduce((sum, elem) => sum + elem) / weightPokemon.length, Math.min(...weightPokemon)];
-        [...nodeParam[0].children].map(child => {
-            if (child.classList.contains("activeValue"))
-                paramHeight = child.textContent;
-        });
-        [...nodeParam[1].children].map(child => {
-            if (child.classList.contains("activeValue"))
-                paramWeight = child.textContent;
-        });
-        typesAndWeaknesses.map(item => {
-            [...item.children].map(el => {
-                if (el.classList.contains("activeBtn")) {
-                    if (el.textContent === 'T')
-                        types.push(item.children[0].textContent);
-                    else
-                        weaknesses.push(item.children[0].textContent);
-                }
-            });
-        });
-
         let objectParam = {
-            range: range[0].value !== "" && range[1].value !== "",
-            height: paramHeight !== "",
-            weight: paramWeight !== "",
+            range: rangeFrom !== "" && rangeTo !== "",
+            height: height !== "",
+            weight: weight !== "",
             types: types.length !== 0,
             weaknesses: weaknesses.length !== 0
         };
@@ -90,24 +79,24 @@ function FilterPokemon(props) {
         });
         pokemons.map(pokemon => {
             let flag = 0;
-            if (objectParam.range && pokemon.id >= +range[0].value && pokemon.id <= +range[1].value)
+            if (objectParam.range && pokemon.id >= +rangeFrom && pokemon.id <= +rangeTo)
                 flag++;
             if (objectParam.height) {
-                let height = +pokemon.parameters.height.split('m')[0];
-                if (paramHeight === "Short" && height < (valuesHeight[1] + valuesHeight[2]) / 2)
+                let heightPokemon = +pokemon.parameters.height.split('m')[0];
+                if (height === "short" && heightPokemon < (valuesHeight[1] + valuesHeight[2]) / 2)
                     flag++;
-                else if (paramHeight === "High" && height >= (valuesHeight[1] + valuesHeight[0]) / 2)
+                else if (height === "high" && heightPokemon >= (valuesHeight[1] + valuesHeight[0]) / 2)
                     flag++;
-                else if (paramHeight === "Medium height" && height >= (valuesHeight[1] + valuesHeight[2]) / 2 && height < (valuesHeight[1] + valuesHeight[0]) / 2)
+                else if (height === "medium" && heightPokemon >= (valuesHeight[1] + valuesHeight[2]) / 2 && heightPokemon < (valuesHeight[1] + valuesHeight[0]) / 2)
                     flag++;
             }
             if (objectParam.weight) {
-                let weight = +pokemon.parameters.weight.split('kg')[0];
-                if (paramWeight === "Thin" && weight < (valuesWeight[1] + valuesWeight[2]) / 2)
+                let weightPokemon = +pokemon.parameters.weight.split('kg')[0];
+                if (weight === "thin" && weightPokemon < (valuesWeight[1] + valuesWeight[2]) / 2)
                     flag++;
-                else if (paramWeight === "Heavy" && weight >= (valuesWeight[1] + valuesWeight[0]) / 2)
+                else if (weight === "heavy" && weightPokemon >= (valuesWeight[1] + valuesWeight[0]) / 2)
                     flag++;
-                else if (paramWeight === "Average weight" && weight >= (valuesWeight[1] + valuesWeight[2]) / 2 && weight < (valuesWeight[1] + valuesWeight[0]) / 2)
+                else if (weight === "medium" && weightPokemon >= (valuesWeight[1] + valuesWeight[2]) / 2 && weightPokemon < (valuesWeight[1] + valuesWeight[0]) / 2)
                     flag++;
             }
             if (objectParam.types) {
@@ -129,55 +118,29 @@ function FilterPokemon(props) {
 
     return (
         <div className="wrapper">
-            <div className="filters">
+            <div className={clsx("filters", {activeFilters: toggleFilters})}>
                 <div className="filters_types">
                     <p className="filters-types_title">Type and weaknesses</p>
                     <div className="b-filters-types">
                         {
-                            Object.keys(colors[0]).map((key, index) =>
-                                <div className="filters-types_flex">
-                                    <p key={key} className="filters-types_type capitalize"
-                                       style={{background: props.color(key)}}>{key}</p>
-                                    <button className="filters-types-flex_btn"
-                                            onClick={() => activeFilterButton(index, 't')}>T</button>
-                                    <button className="filters-types-flex_btn"
-                                            onClick={() => activeFilterButton(index, 'w')}>W</button>
-                                </div>
+                            Object.keys(colors[0]).map(key => <LeftParam refresh = {props.refresh} setTAndW = {setTAndW}
+                                                                         title={key} color={props.color} />
                             )
                         }
                     </div>
                     <div className="filters-types_range">
                         <p className="filters-types-range_title">Numbering range</p>
                         <div>
-                            <input type="text" className="filters-types-range_inp" placeholder="1" />
+                            <input type="text" onChange={event => setRangeFrom(event.target.value)}
+                                   className="filters-types-range_inp" placeholder="1" value={rangeFrom} />
                             <span className="filters-types-range_span">-</span>
-                            <input type="text" className="filters-types-range_inp" placeholder="800" />
+                            <input type="text" onChange={event => setRangeTo(event.target.value)}
+                                   className="filters-types-range_inp" placeholder="800" value={rangeTo} />
                         </div>
                     </div>
                 </div>
                 <div className="filters_param">
-                    <div className="filters-param_height">
-                        <p className="filters-param-height_title">Height</p>
-                        <div className="flex-param">
-                            <p className="filters-param-height_value"
-                               onClick={() => activeFilterParam(0, 0)}>Short</p>
-                            <p className="filters-param-height_value"
-                               onClick={() => activeFilterParam(0, 1)}>Medium height</p>
-                            <p className="filters-param-height_value"
-                               onClick={() => activeFilterParam(0, 2)}>High</p>
-                        </div>
-                    </div>
-                    <div className="filters-param_weight">
-                        <p className="filters-param-weight_title">Weight</p>
-                        <div className="flex-param">
-                            <p className="filters-param-weight_value"
-                               onClick={() => activeFilterParam(1, 0)}>Thin</p>
-                            <p className="filters-param-weight_value"
-                               onClick={() => activeFilterParam(1, 1)}>Average weight</p>
-                            <p className="filters-param-weight_value"
-                               onClick={() => activeFilterParam(1, 2)}>Heavy</p>
-                        </div>
-                    </div>
+                    <RightParam refresh = {props.refresh} setHAndW = {setHAndW} />
                     <div className="filters-param_btns">
                         <button className="filters-param-btns_refresh"
                                 onClick={() => props.refreshFilter()}>Refresh</button>
@@ -186,9 +149,9 @@ function FilterPokemon(props) {
                     </div>
                 </div>
             </div>
-            <div className="filters_open" onClick={() => toggleFilters()}>
-                <button className="filters-open_btn">Filters</button>
-                <img className="filters-open_img" src="./images/arrow.png" />
+            <div className="filters_open" onClick={() => setToggleFilters(!toggleFilters)}>
+                <button className={clsx("filters-open_btn", {activeBtnFilters: toggleFilters})}>Filters</button>
+                <img className={clsx("filters-open_img", {activeImgFilters: toggleFilters})} src="./images/arrow.png" />
             </div>
         </div>
     );

@@ -5,14 +5,15 @@ import FilterPokemon from "./filterPokemon";
 function Filters(props) {
     return (
         <div className="b-filters">
-            <MixAndSort mix = {() => props.mix()}
+            <MixAndSort mix = {props.mix}
                         pokemons = {props.pokemons}
                         filterPokemon = {props.filterPokemon}
-                        sort = {props.sort.bind(this)} />
-            <FilterPokemon color = {props.color.bind(this)}
+                        sort = {props.sort} />
+            <FilterPokemon color = {props.color}
                            pokemons = {props.pokemons}
-                           filter = {props.filter.bind(this)}
-                           refreshFilter = {() => props.refreshFilter()} />
+                           filter = {props.filter}
+                           refreshFilter = {props.refreshFilter}
+                           refresh = {props.refresh} />
         </div>
     );
 }

@@ -12,22 +12,17 @@ function EnterPokemon(props) {
     }, [props.idDidClickPokemon]);
 
     const generateColor = (name) => {
-        return colors[0][name].length === 1 ?
-            `linear-gradient(${colors[0][name]} 50%, ${colors[0][name]} 50%)` :
+        return colors[0][name].length === 1 ? `linear-gradient(${colors[0][name]} 50%, ${colors[0][name]} 50%)` :
             `linear-gradient(${colors[0][name][0]} 50%, ${colors[0][name][1]} 50%)`;
     }
 
     const clickPrevPokemon = (id) => {
-        const descriptions = [...document.querySelectorAll(".pokemon-information-dAbility_one")];
-        descriptions.map(item => item.classList.remove("activeDescriptionAbilities"));
         if (id < props.pokemons[0].id)
             id = props.pokemons[props.pokemons.length - 1].id;
         setId(id);
     }
 
     const clickNextPokemon = (id) => {
-        const descriptions = [...document.querySelectorAll(".pokemon-information-dAbility_one")];
-        descriptions.map(item => item.classList.remove("activeDescriptionAbilities"));
         if (id > props.pokemons[props.pokemons.length - 1].id)
             id = props.pokemons[0].id;
         setId(id);
@@ -73,13 +68,13 @@ function EnterPokemon(props) {
             <div className="pokemon_flex">
                 <Stats pokemon = {pokemon} />
                 <Information pokemon = {pokemon}
-                             color = {generateColor.bind(this)} />
+                             color = {generateColor} />
             </div>
             <Evolve pokemon = {pokemon}
                     pokemons = {props.pokemons}
-                    clickEvolve = {clickEvolve.bind(this)}
-                    color = {generateColor.bind(this)}/>
-            <button className="pokemon_back" onClick={() => props.back()}>More pokemons</button>
+                    clickEvolve = {clickEvolve}
+                    color = {generateColor} />
+            <button className="pokemon_back" onClick={props.back}>More pokemons</button>
         </div>
     );
 }

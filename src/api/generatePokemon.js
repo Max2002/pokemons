@@ -38,7 +38,7 @@ async function generatePokemon(name) {
                 },
                 descriptionAbilities: descriptionsAbilities,
                 stats: {
-                    hp: result.data.stats[0].base_stat,
+                    HP: result.data.stats[0].base_stat,
                     attack: result.data.stats[1].base_stat,
                     defense: result.data.stats[2].base_stat,
                     special_Attack: result.data.stats[3].base_stat,

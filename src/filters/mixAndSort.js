@@ -1,31 +1,27 @@
-import React from 'react';
+import React, {useState} from 'react';
+import clsx from "clsx";
 
 function MixAndSort(props) {
-    const clickSortLabel = () => {
-        document.querySelector(".b-cards_sortList").classList.toggle("activeList");
-        document.querySelector(".b-cards-sort_arrow").classList.toggle("arrowTop");
-    }
+    const [toggleSort, setToggleSort] = useState(false);
+    const [labelSort, setLabelSort] = useState("");
 
     const selectSort = (valueForSort) => {
-        let pokemonsSort = props.filterPokemon.length !== 0 ? props.filterPokemon : props.pokemons;
-        let paramForSorting = document.querySelector(".b-cards-sort_label");
-        let textContents = document.querySelectorAll(".b-cards-sortList_items");
-        if (valueForSort === 'numberAsc') {
+        let pokemonsSort = props.filterPokemon.length !== 0 ? props.filterPokemon.slice() : props.pokemons.slice();
+        if (valueForSort === 'Ascending numbers') {
             pokemonsSort.sort((a, b) => a.id - b.id);
-            paramForSorting.textContent = textContents[1].textContent;
-        } else if (valueForSort === 'numberDesc') {
+            setLabelSort(valueForSort);
+        } else if (valueForSort === 'Descending numbers') {
             pokemonsSort.sort((a, b) => b.id - a.id);
-            paramForSorting.textContent = textContents[2].textContent;
-        } else if (valueForSort === 'nameAsc') {
+            setLabelSort(valueForSort);
+        } else if (valueForSort === 'A - Z') {
             pokemonsSort.sort((x, y) => x.name.localeCompare(y.name));
-            paramForSorting.textContent = textContents[3].textContent;
-        } else if (valueForSort === "nameDesc") {
+            setLabelSort(valueForSort);
+        } else if (valueForSort === "Z - A") {
             pokemonsSort.sort((x, y) => y.name.localeCompare(x.name));
-            paramForSorting.textContent = textContents[4].textContent;
+            setLabelSort(valueForSort);
         } else
-            paramForSorting.textContent = textContents[0].textContent;
-        document.querySelector(".b-cards_sortList").classList.remove("activeList");
-        document.querySelector(".b-cards-sort_arrow").classList.remove("arrowTop");
+            setLabelSort(valueForSort);
+        setToggleSort(false);
 
         return pokemonsSort;
     }
@@ -34,21 +30,21 @@ function MixAndSort(props) {
         <div className="b-cards_func">
             <button className="b-cards_mix" onClick={() => props.mix()}>Surprise me</button>
             <div className="b-cards-func_sort">
-                <div className="b-cards_sort" onClick={() => clickSortLabel()}>
-                    <p className="b-cards-sort_label">Sort</p>
-                    <img src="./images/arrow.png" className="b-cards-sort_arrow" alt="" />
+                <div className="b-cards_sort" onClick={() => setToggleSort(!toggleSort)}>
+                    <p className="b-cards-sort_label">{labelSort === "" ? "Sort" : labelSort}</p>
+                    <img src="./images/arrow.png" className={clsx("b-cards-sort_arrow", {arrowTop: toggleSort})} alt="" />
                 </div>
-                <ul className="b-cards_sortList">
+                <ul className={clsx("b-cards_sortList", {activeList: toggleSort})}>
                     <li className="b-cards-sortList_items"
-                        onClick={() => props.sort(selectSort("noSort"))}>Sort</li>
+                        onClick={() => props.sort(selectSort("Sort"))}>Sort</li>
                     <li className="b-cards-sortList_items"
-                        onClick={() => props.sort(selectSort("numberAsc"))}>Ascending numbers</li>
+                        onClick={() => props.sort(selectSort("Ascending numbers"))}>Ascending numbers</li>
                     <li className="b-cards-sortList_items"
-                        onClick={() => props.sort(selectSort("numberDesc"))}>Descending numbers</li>
+                        onClick={() => props.sort(selectSort("Descending numbers"))}>Descending numbers</li>
                     <li className="b-cards-sortList_items"
-                        onClick={() => props.sort(selectSort("nameAsc"))}>A - Z</li>
+                        onClick={() => props.sort(selectSort("A - Z"))}>A - Z</li>
                     <li className="b-cards-sortList_items"
-                        onClick={() => props.sort(selectSort("nameDesc"))}>Z - A</li>
+                        onClick={() => props.sort(selectSort("Z - A"))}>Z - A</li>
                 </ul>
             </div>
         </div>

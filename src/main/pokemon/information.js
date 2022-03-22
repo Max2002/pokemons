@@ -1,11 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
+import clsx from "clsx";
 
 function Information(props) {
-    const clickDescriptionAbilities = (index) => {
-        const descriptions = [...document.querySelectorAll(".pokemon-information-dAbility_one")];
-        descriptions[index].classList.toggle("activeDescriptionAbilities");
-    }
-    let descriptionAbilities;
+    const [activeDescription, setActiveDescription] = useState("");
 
     return (
         <div className="pokemon_information">
@@ -15,11 +12,6 @@ function Information(props) {
                     const classForValue = param === 'abilities' ? "param_value description capitalize" : "param_value";
                     const value = param !== 'abilities' ? props.pokemon.parameters[param] :
                         props.pokemon.parameters[param].map(ability => ability.ability.name);
-                    descriptionAbilities = props.pokemon.parameters.abilities.map(ability =>
-                        <p className="pokemon-information-dAbility_one">
-                            {props.pokemon.descriptionAbilities[ability.ability.name]}
-                        </p>
-                    );
 
                     return (
                         <div key={param} className="pokemon-information-parameters_param">
@@ -30,11 +22,11 @@ function Information(props) {
                                         {value.map((val, index) =>
                                             index !== value.length - 1 ?
                                                 <span className={classForValue}
-                                                      onClick={() => clickDescriptionAbilities(index)}>
-                                                                {val},</span> :
+                                                      onClick={() => setActiveDescription(
+                                                          activeDescription !== val ? val : "")}>{val},</span> :
                                                 <span className={classForValue}
-                                                      onClick={() => clickDescriptionAbilities(index)}>
-                                                                {val}</span>
+                                                      onClick={() => setActiveDescription(
+                                                          activeDescription !== val ? val : "")}>{val}</span>
                                         )}
                                     </div>
                             }
@@ -42,7 +34,16 @@ function Information(props) {
                     );
                 })
                 }
-                <div className="pokemon-information_dAbility">{descriptionAbilities}</div>
+                <div className="pokemon-information_dAbility">
+                    {
+                        props.pokemon.parameters.abilities.map(ability =>
+                            <p className={clsx("pokemon-information-dAbility_one",
+                                {activeDescriptionAbilities: ability.ability.name === activeDescription})}>
+                                {props.pokemon.descriptionAbilities[ability.ability.name]}
+                            </p>
+                        )
+                    }
+                </div>
             </div>
             <div className="pokemon-information_main">
                 <div className="pokemon-information-main_types">
